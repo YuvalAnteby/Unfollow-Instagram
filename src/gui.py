@@ -3,7 +3,7 @@ from tkinter import *
 from tkinter import filedialog, messagebox
 import zipfile
 
-from src.json_processor import get_general_unfollowers, save_whitelist, load_whitelist
+from json_processor import get_general_unfollowers, save_whitelist, load_whitelist
 
 
 def btn_click():
