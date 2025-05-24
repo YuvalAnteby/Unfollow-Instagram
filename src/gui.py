@@ -15,6 +15,7 @@ def btn_click():
             result_box.insert(END, "\n".join(unfollowers))
         else:
             result_box.insert(END, "No unfollowers!")
+        result_box.config(state=DISABLED)
 
 
 
