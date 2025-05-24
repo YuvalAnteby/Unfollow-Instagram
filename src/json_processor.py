@@ -1,4 +1,5 @@
 import json
+import os
 
 
 def load_followers(path):
@@ -37,6 +38,24 @@ def load_following(path):
                 usernames.append(string_list["value"])
     return usernames
 
+
+def save_whitelist(usernames: list[str]):
+    """
+    Saves a whitelist.json file for users we don't care if they don't follow back
+    :param usernames: list of usernames
+    :return:
+    """
+    os.makedirs("temp_instagram_data", exist_ok=True)
+    path = os.path.join("temp_instagram_data", "whitelist.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(usernames, f, indent=2)
+
+def load_whitelist():
+    path = os.path.join("temp_instagram_data", "whitelist.json")
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            return set(json.load(f))
+    return set()
 
 def get_general_unfollowers(following_path, followers_path):
     """

@@ -3,23 +3,34 @@ from tkinter import *
 from tkinter import filedialog, messagebox
 import zipfile
 
-from src.json_processor import get_general_unfollowers
+from src.json_processor import get_general_unfollowers, save_whitelist, load_whitelist
 
 
 def btn_click():
+    """
+    Handle click event, searches for unfollowers and updated the text box
+    :return:
+    """
     paths = select_files()
     if paths and "followers_1" in paths and "following" in paths:
         unfollowers = get_general_unfollowers(paths["following"], paths["followers_1"])
+        whitelisted = load_whitelist()
+        filtered = [u for u in unfollowers if u not in whitelisted]
+        result_box.config(state=NORMAL)
         result_box.delete(1.0, END)
-        if unfollowers:
-            result_box.insert(END, "\n".join(unfollowers))
+        if filtered:
+            result_box.insert(END, "\n".join(filtered))
         else:
             result_box.insert(END, "No unfollowers!")
         result_box.config(state=DISABLED)
 
 
-
 def select_files():
+    """
+    Handles selection of .zip file or 2 .json files, should contain the files followers_1.json and following.json.
+    If needed will create temp files outside the zip file with the .json files.
+    :return: paths to the 2 files,
+    """
     file_data = {}
     file_paths = filedialog.askopenfilenames(
         title="Select followers_1.json and following.json files",
@@ -27,7 +38,6 @@ def select_files():
     )
     if len(file_paths) == 1 and "instagram" in file_paths[0] and file_paths[0].endswith('.zip'):
         file_data['zip_file'] = file_paths[0]
-        file_label.config(text=f"Selected ZIP file:\n{file_paths[0]}")
         return handle_zip(file_paths[0])
 
     elif len(file_paths) == 2:
@@ -64,14 +74,38 @@ def handle_zip(zip_path):
                 zip_ref.extract(found_files["following"], extract_dir)
                 followers_path = os.path.join(extract_dir, found_files["followers_1"])
                 following_path = os.path.join(extract_dir, found_files["following"])
-                print("Followers path:", followers_path)
-                print("Following path:", following_path)
                 return {"followers_1": followers_path, "following": following_path}
             else:
                 return None
 
     except zipfile.BadZipFile:
         return None
+
+
+def open_whitelist_window():
+    """
+    Opens a dialog window to let the user enter whitelisted usernames, saves the whitelist locally
+    :return:
+    """
+    win = Toplevel(root)
+    win.title("Edit Whitelist")
+    win.geometry("400x300")
+    Label(win, text="Enter usernames to whitelist (comma-separated or one per line):").pack(pady=5)
+    input_box = Text(win, height=10, width=40)
+    input_box.pack(padx=10, pady=5)
+    # Load previous input of whitelist
+    whitelist = load_whitelist()
+    if whitelist:
+        input_box.insert(END, "\n".join(sorted(whitelist)))
+    # Managed saving to the whitelist file
+    def save_and_close():
+        raw = input_box.get("1.0", END)
+        usernames = [u.strip() for u in raw.replace(",", "\n").splitlines() if u.strip()]
+        save_whitelist(usernames)
+        win.destroy()
+        messagebox.showinfo("Whitelist Saved", f"Saved {len(usernames)} usernames to whitelist.")
+    Button(win, text="Save", command=save_and_close).pack(pady=10)
+    Button(win, text="Cancel", command=win.destroy).pack(pady=10)
 
 
 # Initialize the root window
@@ -81,9 +115,9 @@ root.geometry("600x600")
 # Button for followers
 btn_selector = Button(root, text="Select file", command=btn_click)
 btn_selector.pack(pady=10)
-# Label to show selected file(s)
-file_label = Label(root, text="No file(s) selected", wraplength=500, justify=LEFT)
-file_label.pack()
+# Button for whitelist
+btn_whitelist = Button(root, text="Edit Whitelist", command=open_whitelist_window)
+btn_whitelist.pack(pady=5)
 
 # Result box with scrollbar
 result_frame = Frame(root)
