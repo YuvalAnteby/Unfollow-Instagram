@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {createRoot} from 'react-dom/client';
 import {getWhitelist, saveWhitelist} from '../utils/whitelist';
 import './WhitelistEditor.css';
@@ -24,32 +24,16 @@ export default function WhitelistEditor({onClose, previouslyFocused}) {
         };
     }, []);
 
-    useEffect(() => {
-        textareaRef.current?.focus();
-        const onKey = (e) => {
-            if (e.key === 'Escape') {
-                e.stopPropagation();
-                handleClose();
-            }
-            if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') {
-                e.preventDefault();
-                handleSave();
-            }
-        };
-        document.addEventListener('keydown', onKey);
-        return () => document.removeEventListener('keydown', onKey);
-    }, []);
-
-    const handleClose = () => {
+    const handleClose = useCallback(() => {
         onClose?.();
         previouslyFocused?.focus?.();
-    };
+    }, [onClose, previouslyFocused]);
 
     const onOverlayClick = (e) => {
         if (e.target === e.currentTarget) handleClose();
     };
 
-    const handleSave = () => {
+    const handleSave = useCallback(() => {
         const entries = input
             .split(/\r?\n|,/)
             .map((s) => s.trim())
@@ -58,7 +42,22 @@ export default function WhitelistEditor({onClose, previouslyFocused}) {
         saveWhitelist(entries);
         handleClose();
         alert(`Saved ${entries.length} username${entries.length === 1 ? '' : 's'} to whitelist.`);
-    };
+    }, [input, handleClose]);
+
+    // Keybindings: rebind when handleSave changes so we don't capture stale input
+    useEffect(() => {
+        const onKey = (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') {
+                e.preventDefault();
+                handleSave(); // always latest input now
+            } else if (e.key === 'Escape') {
+                e.stopPropagation();
+                handleClose();
+            }
+        };
+        document.addEventListener('keydown', onKey);
+        return () => document.removeEventListener('keydown', onKey);
+    }, [handleSave, handleClose]);
 
     return (
         <div className="wl-modal-overlay" onClick={onOverlayClick}>
