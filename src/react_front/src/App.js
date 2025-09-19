@@ -3,6 +3,7 @@ import FileUploader from './components/FileUploader';
 import WhitelistEditor from './components/WhitelistEditor';
 import ResultViewer from './components/ResultViewer';
 import './App.css';
+import {Toaster} from "react-hot-toast";
 
 const THEME_KEY = 'theme';
 const THEMES = ['dark', 'light'];
@@ -78,6 +79,8 @@ export default function App() {
             <footer className="footer">
                 <span className="muted">Built locally. Your data stays in your browser.</span>
             </footer>
+
+            <Toaster position="bottom-center" />
         </div>
     );
 }

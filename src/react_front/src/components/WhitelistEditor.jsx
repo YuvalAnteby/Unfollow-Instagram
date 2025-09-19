@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {createRoot} from 'react-dom/client';
+import { toast } from 'react-hot-toast';
 import {getWhitelist, saveWhitelist} from '../utils/whitelist';
 import './WhitelistEditor.css';
 
@@ -41,7 +42,7 @@ export default function WhitelistEditor({onClose, previouslyFocused}) {
 
         saveWhitelist(entries);
         handleClose();
-        alert(`Saved ${entries.length} username${entries.length === 1 ? '' : 's'} to whitelist.`);
+        toast.success(`Saved ${entries.length} username${entries.length === 1 ? '' : 's'}`);
     }, [input, handleClose]);
 
     // Keybindings: rebind when handleSave changes so we don't capture stale input
