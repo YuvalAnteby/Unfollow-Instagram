@@ -1,0 +1,109 @@
+/* Uses global tokens from App.css (no re-declaration needed) */
+
+/* ---------- Modal shell ---------- */
+.wl-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: color-mix(in srgb, var(--text) 20%, transparent);
+    backdrop-filter: blur(6px);
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    z-index: 1000;
+    animation: wl-fade-in 120ms ease-out;
+
+    /* Prevent any accidental horizontal scroll from subpixel rounding */
+    overflow: hidden;
+}
+
+.wl-modal {
+    /* Use the full available content width of the overlay, minus its padding */
+    width: 100%;
+    max-width: min(720px, calc(100vw - 40px)); /* 40px = overlay left+right padding */
+    box-sizing: border-box;                     /* include border in width calc */
+    margin-inline: auto;
+
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--outline);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    animation: wl-pop-in 140ms ease-out;
+}
+
+/* ---------- Sections ---------- */
+.wl-modal-header {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px clamp(14px, 3vw, 20px);
+    border-bottom: 1px solid var(--outline);
+}
+
+.wl-modal-title {
+    margin: 0;
+    font-size: 1.15rem;
+    letter-spacing: .2px;
+}
+
+.wl-modal-subtitle {
+    margin: 6px 0 0;
+}
+
+.wl-modal-body {
+    padding: 16px clamp(14px, 3vw, 20px);
+}
+
+.wl-modal-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px clamp(14px, 3vw, 20px);
+    border-top: 1px solid var(--outline);
+}
+
+.wl-kbd-hint {
+    margin-left: auto;
+    font-size: 0.85rem;
+}
+
+/* ---------- Inputs ---------- */
+.wl-textarea {
+    width: 100%;
+    min-height: 220px;
+    resize: vertical;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--outline);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font: inherit;
+    line-height: 1.35;
+    box-shadow: var(--shadow-sm);
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.wl-textarea:focus {
+    border-color: color-mix(in srgb, var(--primary) 60%, var(--outline) 40%);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+/* ---------- Animations ---------- */
+@keyframes wl-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes wl-pop-in {
+    from { transform: translateY(6px) scale(0.98); opacity: 0; }
+    to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 480px) {
+    .wl-modal-title { font-size: 1.05rem; }
+    .wl-textarea { min-height: 180px; }
+}

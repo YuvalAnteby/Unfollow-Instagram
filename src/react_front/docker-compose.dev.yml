@@ -1,0 +1,20 @@
+services:
+  react:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    container_name: ig-unfollowers-dev
+    environment:
+      - PORT=3000
+      - CHOKIDAR_USEPOLLING=true # for hot reload
+      - WATCHPACK_POLLING=true   # for hot reload on windows
+      - NODE_ENV=development
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app:delegated               # mount source code for hot reload
+      - node_modules:/app/node_modules # keep the container's node modules
+
+volumes:
+  node_modules:
