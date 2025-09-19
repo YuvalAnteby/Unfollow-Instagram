@@ -24,7 +24,7 @@ export default function ResultViewer({unfollowers}) {
                     {unfollowers.map((u) => (
                         <li key={u} className="unfollower-item">
                             <a
-                                href={`https://www.instagram.com/${u}`}
+                                href={`https://www.instagram.com/${encodeURIComponent(u)}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 draggable={false}
