@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useRef, useState} from 'react';
 import JSZip from 'jszip';
 import { parseFollowers, parseFollowing } from '../utils/jsonParser';
 import { extractJsonFiles } from '../utils/zipUtils';
 import { getWhitelist } from '../utils/whitelist';
+import './FileUploader.css'
 
 /**
  * FileUploader: handles file input (ZIP or JSONs), parsing, and computes unfollowers.
@@ -10,6 +11,16 @@ import { getWhitelist } from '../utils/whitelist';
  * - onResults: (Array<String>) => void  // callback with list of unfollowers
  */
 export default function FileUploader({ onResults }) {
+
+    const inputRef = useRef(null);
+    const [dragging, setDragging] = useState(false);
+
+    /**
+     * Handles the logic when files have been selected.
+     * Checks the files' type, if they include the needed .json files and acts accordingly
+     * @param files list of files given by user
+     * @returns {Promise<void>}
+     */
     async function handleFiles(files) {
         let followersData, followingData;
 
@@ -43,13 +54,34 @@ export default function FileUploader({ onResults }) {
         onResults(unfollowers);
     }
 
+    function onDrop(e) {
+        e.preventDefault();
+        setDragging(false);
+        handleFiles([...e.dataTransfer.files]);
+    }
+
+    function onSelect(e) {
+        handleFiles([...e.target.files]);
+    }
+
     return (
-        <div>
+        <div className={`fileUploader${dragging ? ' dragging' : ''}`}
+            onClick={() => inputRef.current.click()}
+            onDragOver={e => {
+                e.preventDefault();
+                setDragging(true);
+            }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={onDrop}
+        >
+            <p>Click or drop ZIP/JSON files here</p>
             <input
+                ref={inputRef}
                 type="file"
                 multiple
                 accept=".zip,.json"
-                onChange={e => handleFiles([...e.target.files])}
+                style={{ display: 'none' }}
+                onChange={onSelect}
             />
         </div>
     );

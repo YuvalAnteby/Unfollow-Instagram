@@ -1,0 +1,12 @@
+.fileUploader {
+    border: 2px dashed gray;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    background: white;
+}
+
+.fileUploader.dragging {
+    background: #f0f0f0;
+}
