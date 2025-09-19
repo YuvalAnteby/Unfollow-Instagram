@@ -1,0 +1,61 @@
+/* --- LIGHT MODE (DEFAULT) --- */
+.result-container {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.unfollowersHeading {
+    margin: 0 0 12px;
+}
+
+.unfollower-list {
+    display: inline-grid;                  /* shrink-wrap to content */
+    grid-template-columns: max-content;    /* width = widest item */
+    grid-auto-rows: auto;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.unfollower-item {
+    /* keep <li> unclickable space */
+}
+
+.unfollower-item a {
+    display: block;            /* stretch to grid column width */
+    width: 100%;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    background: #f9f9f9;
+    color: #0077cc;
+    font-weight: 500;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+    user-select: text;         /* makes copying easy */
+}
+
+.unfollower-item a:hover {
+    background: #efefef;
+}
+
+.unfollower-item a:active {
+    transform: translateY(1px);
+}
+
+.unfollower-item a:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 119, 204, 0.35);
+}
+
+.no-unfollowers {
+    color: green;
+    font-weight: 500;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+    .unfollower-item a {
+        transition: none;
+    }
+}

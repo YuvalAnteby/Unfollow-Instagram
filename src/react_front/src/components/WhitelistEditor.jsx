@@ -1,56 +1,123 @@
-import React, { useState, useEffect } from 'react';
-import { createRoot } from 'react-dom/client';
-import { getWhitelist, saveWhitelist } from '../utils/whitelist';
+import React, {useState, useEffect, useRef} from 'react';
+import {createRoot} from 'react-dom/client';
+import {getWhitelist, saveWhitelist} from '../utils/whitelist';
+import './WhitelistEditor.css';
 
 /**
  * WhitelistEditor: modal-style editor to view and update whitelist stored in localStorage.
  * Exposes a static open() method that renders the editor via React 18's createRoot.
  */
-export default function WhitelistEditor({ onClose }) {
+export default function WhitelistEditor({onClose, previouslyFocused}) {
     const [input, setInput] = useState('');
+    const textareaRef = useRef(null);
 
     useEffect(() => {
         const list = Array.from(getWhitelist()).join('\n');
         setInput(list);
     }, []);
 
-    function handleSave() {
-        const entries = input.split(/\r?\n|,/)
-            .map(s => s.trim())
+    useEffect(() => {
+        const prevOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = prevOverflow;
+        };
+    }, []);
+
+    useEffect(() => {
+        textareaRef.current?.focus();
+        const onKey = (e) => {
+            if (e.key === 'Escape') {
+                e.stopPropagation();
+                handleClose();
+            }
+            if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') {
+                e.preventDefault();
+                handleSave();
+            }
+        };
+        document.addEventListener('keydown', onKey);
+        return () => document.removeEventListener('keydown', onKey);
+    }, []);
+
+    const handleClose = () => {
+        onClose?.();
+        previouslyFocused?.focus?.();
+    };
+
+    const onOverlayClick = (e) => {
+        if (e.target === e.currentTarget) handleClose();
+    };
+
+    const handleSave = () => {
+        const entries = input
+            .split(/\r?\n|,/)
+            .map((s) => s.trim())
             .filter(Boolean);
+
         saveWhitelist(entries);
-        onClose();
-        alert(`Saved ${entries.length} usernames to whitelist.`);
-    }
+        handleClose();
+        alert(`Saved ${entries.length} username${entries.length === 1 ? '' : 's'} to whitelist.`);
+    };
 
     return (
-        <div style={{ position: 'fixed', top: 50, left: '50%', transform: 'translateX(-50%)', background: '#fff', padding: 20, boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}>
-            <h2>Edit Whitelist</h2>
-            <textarea
-                rows={10}
-                cols={40}
-                value={input}
-                onChange={e => setInput(e.target.value)}
-            />
-            <div>
-                <button onClick={handleSave}>Save</button>
-                <button onClick={onClose}>Cancel</button>
+        <div className="wl-modal-overlay" onClick={onOverlayClick}>
+            <div className="wl-modal" role="dialog" aria-modal="true" aria-labelledby="wl-title">
+                <header className="wl-modal-header">
+                    <div>
+                        <h2 id="wl-title" className="wl-modal-title">Edit Whitelist</h2>
+                        <p className="wl-modal-subtitle muted">
+                            One username per line (commas also supported). Stored locally in your browser.
+                        </p>
+                    </div>
+                    <button
+                        className="header-btn"
+                        onClick={handleClose}
+                        aria-label="Close"
+                        title="Close"
+                    >
+                        ✕
+                    </button>
+                </header>
+
+                <div className="wl-modal-body">
+          <textarea
+              ref={textareaRef}
+              className="wl-textarea"
+              rows={12}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={`example_user\nanother_user\nthird_user`}
+          />
+                </div>
+
+                <footer className="wl-modal-actions">
+                    <button className="btn" onClick={handleSave}>Save</button>
+                    <button className="btn btn-outline" onClick={handleClose}>Cancel</button>
+                    <span className="wl-kbd-hint muted">Ctrl/⌘+S to save • Esc to close</span>
+                </footer>
             </div>
         </div>
     );
 }
 
-// Static opener for simplicity using React 18 API
+/* ---------- Static opener ---------- */
 let editorRoot = null;
 WhitelistEditor.open = () => {
     if (editorRoot) return;
-    editorRoot = document.createElement('div');
-    document.body.append(editorRoot);
-    const root = createRoot(editorRoot);
+    const host = document.createElement('div');
+    editorRoot = host;
+    document.body.appendChild(host);
+    const root = createRoot(host);
+
+    const previouslyFocused = document.activeElement;
+
     function close() {
         root.unmount();
-        document.body.removeChild(editorRoot);
+        document.body.removeChild(host);
         editorRoot = null;
+        previouslyFocused?.focus?.();
     }
-    root.render(<WhitelistEditor onClose={close} />);
+
+    root.render(<WhitelistEditor onClose={close} previouslyFocused={previouslyFocused}/>);
 };

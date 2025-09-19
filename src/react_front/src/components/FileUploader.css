@@ -1,12 +1,74 @@
-.fileUploader {
-    border: 2px dashed gray;
-    border-radius: 8px;
-    padding: 30px;
+.uploader {
+    position: relative;
+    background: var(--surface);
+    border: 1px dashed var(--outline);
+    border-radius: var(--radius);
+    padding: 20px clamp(14px, 3vw, 18px); /* Reduced padding for better proportion */
     text-align: center;
     cursor: pointer;
-    background: white;
+    box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.06));
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.25s ease, transform 0.06s ease;
+    outline: none;
+    min-height: 120px; /* Set a reasonable minimum height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
-.fileUploader.dragging {
-    background: #f0f0f0;
+.uploader:hover {
+    background: color-mix(in srgb, var(--surface) 92%, #000 8%);
+}
+
+.uploader:active {
+    transform: translateY(1px);
+}
+
+.uploader:focus-visible {
+    box-shadow:
+            0 0 0 3px color-mix(in srgb, var(--primary) 35%, transparent),
+            var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.06));
+}
+
+.uploader.dragging {
+    border-color: var(--primary);
+    background: color-mix(in srgb, var(--surface) 85%, var(--primary) 15%);
+}
+
+.uploader-icon {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 8px;
+    color: var(--primary);
+    opacity: 0.9;
+    flex-shrink: 0; /* Prevent icon from shrinking */
+}
+
+.uploader-title {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 4px;
+    margin-top: 0; /* Ensure no extra top margin */
+}
+
+.uploader-subtitle {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin: 0; /* Remove bottom margin that was creating extra space */
+}
+
+.uploader-hint {
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.uploader-input {
+    display: none;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .uploader {
+        transition: none;
+    }
 }
