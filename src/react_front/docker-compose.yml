@@ -1,0 +1,21 @@
+version: "0.0.1"
+services:
+
+  react:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: reactjs
+    environment:
+      - PORT=3000
+      - CHOKIDAR_USEPOLLING=true # for hot reload
+      - WATCHPACK_POLLING=true   # for hot reload on windows
+      - NODE_ENV=development     # dev mode
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app:delegated
+      - node_modules:/app/node_modules
+
+volumes:
+  node_modules:
