@@ -2,9 +2,9 @@ name: Deploy to GitHub Pages
 
 on:
   workflow_run:
-    workflows: [ "CI" ]
-    types: [ completed ]
-  workflow_dispatch:
+    workflows: ["CI"]
+    types: [completed]
+  workflow_dispatch:  # optional manual trigger (won't run unless you add a manual path)
 
 permissions:
   contents: read
@@ -20,13 +20,18 @@ jobs:
     # only deploy when triggered by workflow_run AND CI concluded successfully
     if: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+
+    # REQUIRED for actions/deploy-pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - name: Download artifact from CI
         uses: actions/download-artifact@v4
         with:
           name: build-artifact
           path: ./build
-          # fetch artifact from the CI run that triggered this workflow:
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
