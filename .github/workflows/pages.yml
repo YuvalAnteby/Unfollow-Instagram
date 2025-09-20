@@ -33,6 +33,7 @@ jobs:
         run: npm ci
 
       - name: Build
+        working-directory: react_front
         run: npm run build
 
       - name: Upload artifact
