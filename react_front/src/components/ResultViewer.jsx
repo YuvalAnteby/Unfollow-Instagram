@@ -1,5 +1,5 @@
 import React from 'react';
-import './ResultViewer.css'
+import './ResultViewer.css';
 
 /**
  * ResultViewer: displays the list of unfollowers or a message if none.

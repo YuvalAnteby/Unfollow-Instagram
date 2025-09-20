@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: react_front/package-lock.json
+
+      - name: Install
+        working-directory: react_front
+        run: npm ci
+
+      - name: Lint
+        working-directory: react_front
+        run: |
+          if npm run | grep -q "^  lint"; then npm run lint; else echo "No lint script"; fi
+
+      - name: Build
+        working-directory: react_front
+        run: npm run build

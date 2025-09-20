@@ -37,7 +37,7 @@ export default function App() {
                 <div className="header-content">
                     <div className="header-main">
                         <h1 className="title">Instagram Unfollowers Checker</h1>
-                        <p className="subtitle">Drop your export and see who doesn't follow back.</p>
+                        <p className="subtitle">{"Drop your export and see who doesn't follow back."}</p>
                     </div>
                     <div className="header-actions">
                         <button
