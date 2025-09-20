@@ -30,7 +30,7 @@ export default function App() {
         const currentIndex = THEMES.indexOf(theme);
         setTheme(THEMES[(currentIndex + 1) % THEMES.length]);
     };
-    const ddd = 4;
+
     return (
         <div className="page">
             <header className="header">

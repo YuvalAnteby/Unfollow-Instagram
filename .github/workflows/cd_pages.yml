@@ -1,0 +1,39 @@
+name: Deploy to GitHub Pages
+
+on:
+  workflow_run:
+    workflows: [ "CI" ]
+    types: [ completed ]
+
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}  # only deploy if CI passed
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact from CI
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifact                           # must match the name you upload in CI
+          path: ./build
+
+      - name: Upload to Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./build
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
