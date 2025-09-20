@@ -28,21 +28,21 @@ Instagram data export.
 
 1. Go
    to [Instagram's info & permissions center](https://accountscenter.instagram.com/info_and_permissions/?theme=dark)<br>
-   <img src="screenshots/01.png" width="48%">
+   <img src="docs/screenshots/01.png" width="48%">
 
 2. Request to download your information<br>
-   <img src="screenshots/02.png" width="48%">
+   <img src="docs/screenshots/02.png" width="48%">
 
 3. Select **"All of your information"** or at least make sure **"Followers and following"** is checked<br>
-   <img src="screenshots/04.png" width="48%">
-   <img src="screenshots/05.png" width="48%">
+   <img src="docs/screenshots/04.png" width="48%">
+   <img src="docs/screenshots/05.png" width="48%">
 
 4. Choose **"Download to device"**
 
 5. Set:
     - **Date range**: `All time`
     - **Format**: `JSON`
-      <br><img src="screenshots/05.png" width="48%">
+      <br><img src="docs/screenshots/05.png" width="48%">
 
 6. Click **Create files**, wait for Instagram's email, and download the `.zip` file to your computer
 
