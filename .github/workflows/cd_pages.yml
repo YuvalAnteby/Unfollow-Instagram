@@ -26,7 +26,7 @@ jobs:
       - name: Download artifact from CI
         uses: actions/download-artifact@v4
         with:
-          name: build-artifact                           # must match the name you upload in CI
+          name: build-artifact
           path: ./build
 
       - name: Upload to Pages

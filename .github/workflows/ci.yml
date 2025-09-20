@@ -1,9 +1,18 @@
 name: CI
 
 on:
-  pull_request:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   ci:
@@ -17,7 +26,7 @@ jobs:
           cache: npm
           cache-dependency-path: react_front/package-lock.json
 
-      - name: Install
+      - name: Install Dependencies
         working-directory: react_front
         run: npm ci
 
@@ -29,3 +38,9 @@ jobs:
       - name: Build
         working-directory: react_front
         run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          path: react_front/build
