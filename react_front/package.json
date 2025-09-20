@@ -1,7 +1,7 @@
 {
-  "name": "react-unfollowers-app",
+  "name": "ig-unfollowers",
   "version": "1.0.0",
-  "private": true,
+  "homepage": "https://YuvalAnteby.github.io/Unfollow-Instagram/",
   "dependencies": {
     "jszip": "^3.10.1",
     "react": "^18.2.0",
