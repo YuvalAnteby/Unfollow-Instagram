@@ -26,8 +26,10 @@ jobs:
         with:
           node-version: 20
           cache: "npm"
+          cache-dependency-path: react_front/package-lock.json
 
       - name: Install deps
+        working-directory: react_front
         run: npm ci
 
       - name: Build
@@ -36,7 +38,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: build
+          path: react_front/build
 
   deploy:
     needs: build
