@@ -14,7 +14,6 @@ export function parseFollowers(data) {
 }
 
 /**
- * parseFollowing: replicate load_following() logic from Python version.
  * @param {Object} data JSON object from following.json
  * @returns {Array<String>} list of following usernames
  */
@@ -22,8 +21,15 @@ export function parseFollowing(data) {
     const entries = data.relationships_following || [];
     const result = [];
     entries.forEach(entry => {
-        if (entry.string_list_data) {
-            entry.string_list_data.forEach(s => result.push(s.value));
+        // The username is now directly in the 'title' field
+        if (entry.title) {
+            result.push(entry.title);
+        }
+        // Fallback: If title is empty, check value (just in case mixed data)
+        else if (entry.string_list_data) {
+            entry.string_list_data.forEach(s => {
+                if (s.value) result.push(s.value);
+            });
         }
     });
     return result;
